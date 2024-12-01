@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lead Checker</title>
+</head>
+<body>
+  <!-- Conteúdo da página que será mostrado para bots -->
+  <div id="page-content" style="display: none;">
+    <h1>Conteúdo da Página</h1>
+    <p>Bem-vindo! Você está acessando esta página.</p>
+  </div>
+
+  <script>
+    async function checkDeviceAndLocation() {
+      // Verifica se o dispositivo é um celular com base na largura da tela
+      const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+      const screenWidth = window.innerWidth;
+      const isBot = /bot|crawl|spider|robot|crawling|search|scraper/i.test(navigator.userAgent);
+
+      // Verifica se é um bot
+      if (isBot) {
+        // Mostra o conteúdo da página para bots
+        document.getElementById('page-content').style.display = 'block';
+        return;
+      }
+
+      // Verifica se é um dispositivo móvel e se a largura da tela é típica de dispositivos móveis
+      if (isMobile && screenWidth <= 768) {
+        // Chama a API para verificar a localização
+        try {
+          const response = await fetch('https://ipinfo.io/?token=70d31ec68c0158');
+          const data = await response.json();
+
+          if (data.country === 'BR') {
+            // Redireciona para a página de leads se for no Brasil
+            window.location.href = 'https://example.com/pagina2';
+          } else {
+            // Mostra o conteúdo da página se não for no Brasil
+            document.getElementById('page-content').style.display = 'block';
+          }
+        } catch (error) {
+          console.error('Erro ao verificar a localização:', error);
+          // Mostra o conteúdo da página em caso de erro
+          document.getElementById('page-content').style.display = 'block';
+        }
+      } else {
+        // Mostra o conteúdo da página se não for um dispositivo móvel
+        document.getElementById('page-content').style.display = 'block';
+      }
+    }
+
+    // Executa a verificação ao carregar a página
+    checkDeviceAndLocation();
+  </script>
+</body>
+</html>
